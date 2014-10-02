@@ -8,7 +8,6 @@ var $baba;
 var show_details = true;
 var zooming = false;
 
-
 $(document).ready(function(){
   $tt = $('#tooltip');
   $baba = $('#baba');
@@ -52,36 +51,6 @@ $(document).ready(function(){
       }
     }
   });
-  //scale = 1;
-  //$baba.on('mousewheel', function(e) {
-    //if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-      //e.preventDefault();
-      //scale += e.deltaY > 0 ? .001 : -.001;
-      //if (scale < 1) scale = 1;
-      //if (counter === 0) {
-        //set_scale(scale, e.pageX, e.pageY);
-      //}
-    //}
-  //});
-  //var isDragging = false;
-  //var wasDragging = false;
-
-  //$("#baba").mousedown(function(e) {
-    //var pos_x = $('#baba').offset().left - e.pageX;
-    //var pos_y = $('#baba').offset().top - e.pageY;
-    //$(window).mousemove(function(e) {
-      //isDragging = true;
-      //$('#baba').offset({
-        //left: (scale/100) * (e.pageX + pos_x),
-        //top: (scale/100) * (e.pageY + pos_y)
-      //})
-    //});
-  //}).mouseup(function() {
-    //wasDragging = isDragging;
-    //isDragging = false;
-    //$(window).unbind("mousemove");
-  //});
-
 });
 
 function draw(data) {
@@ -144,19 +113,6 @@ function add_item(item) {
         $(window).unbind('mousemove');
       }
     });
-    //$col.hover(function() {
-      //$tt.html('<h1>' + item[0] + '</h1><span>' + quantity.toLocaleString() + ' for $' + cost.toLocaleString() + '</span>');
-      //$(this).append($tt);
-      //$tt.show();
-      //if (w < 300) {
-        //$(this).addClass('hover');
-        //$baba.addClass('offset');
-      //}
-    //}, function() {
-      //$tt.remove();
-      //$(this).removeClass('hover');
-      //$baba.removeClass('offset');
-    //});
 
     $col.attr('target', '_blank');
     $col.attr('href', item[6]);
