@@ -9,6 +9,11 @@ var show_details = true;
 var zooming = false;
 
 $(document).ready(function(){
+  //if (navigator.userAgent.indexOf("Chrome") < 0) {
+    //$('#warning').show();
+    //return false;
+  //}
+
   $tt = $('#tooltip');
   $baba = $('#baba');
   set_height();
@@ -28,6 +33,8 @@ $(document).ready(function(){
   });
 
   $.get('riot4.csv', function(data){
+  //$.get('police_toys.csv', function(data){
+  //$.get('drugs_with_pics.csv', function(data){
     var data = $.csv.toArrays(data);
     draw(data);
   });
@@ -58,7 +65,8 @@ function draw(data) {
   data.sort(function(a, b) {
     return (b[3]*b[2] - a[3] * a[2]);
   });
-  for (var i = 0; i < total_items; i++) {
+  //for (var i = 0; i < total_items; i++) {
+  for (var i = 0; i < 10; i++) {
     add_item(data[i]);
   }
 }
@@ -71,13 +79,12 @@ function add_item(item) {
   var cost = quantity * max_price;
 
   $baba.append($col);
-
-  $(img).load(function(){
+  img.onload = function(){
     var h = height / quantity;
-    var w = (h/this.height) * this.width;
+    var w = (h/img.height) * img.width;
 
     $col.css({
-      'background-image': 'url(' + this.src + ')',
+      'background-image': 'url(' + img.src + ')',
       'background-size': w + 'px ' + h + 'px',
       width: w
     });
@@ -120,7 +127,7 @@ function add_item(item) {
     total_width += w;
     counter --;
     if (counter == 0) resize_window();
-  });
+  };
 
   img.src = 'images/' + item[9];
 
@@ -147,6 +154,7 @@ function resize_window() {
 }
 
 function set_height() {
-  height = $(window).height();
+  //height = $(window).height();
+  height = window.innerHeight;
   $baba.css({height: height - $('#key').outerHeight(), marginTop: $('#key').outerHeight()});
 }

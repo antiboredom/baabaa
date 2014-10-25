@@ -16,6 +16,7 @@ a {
   left:0px;
   top:0px;
   overflow: hidden;
+  /*-webkit-transform: translate3d(0,0,0);*/
 }
 
 
@@ -100,4 +101,11 @@ a {
 
 #show_details {
   margin-left: 40px;
+  margin-right: 40px;
+}
+
+#warning {
+  margin-top: 50px;
+  text-align:center;
+  display: none;
 }
