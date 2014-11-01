@@ -28,7 +28,11 @@ a {
 }
 
 .item.hover {
-  box-shadow: inset 0px 0px 0px 2px #333;
+  /*box-shadow: inset 0px 0px 0px 2px #333;*/
+  /*box-shadow: inset 0px 0px 0px 2px #333;*/
+  border: 1px solid #333;
+  border-top: 0;
+  border-bottom: 0;
 }
 
 #tooltip {

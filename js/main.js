@@ -7,23 +7,20 @@ var $tt;
 var $baba;
 var show_details = true;
 var zooming = false;
-var c, ctx;
 
 $(document).ready(function(){
   //if (navigator.userAgent.indexOf("Chrome") < 0) {
     //$('#warning').show();
     //return false;
   //}
-  c = $('canvas')[0];
-  ctx = c.getContext('2d');
 
   $tt = $('#tooltip');
   $baba = $('#baba');
   set_height();
 
-  $(window).resize(function(){
-    set_height();
-  });
+  //$(window).resize(function(){
+    //set_height();
+  //});
 
   $('#show_details').click(function(e){
     e.preventDefault();
@@ -86,44 +83,48 @@ function add_item(item, ind) {
 
   $baba.append($col);
   img.onload = function(){
-
     var h = height / quantity;
     var w = (h/img.height) * img.width;
 
+    $col.append(img);
+    $col.data('w', w);
+    $col.data('h', h);
+    $col.data('quantity', quantity);
+
+    $col.css({width: w, height: height});
     $canv[0].width = w;
     $canv[0].height = height;
-    console.log(this);
     for (var i = 0; i < quantity; i ++) {
       ctx.drawImage(this, 0, i * h, w, h);
     }
-    //$col.hover(function() {
-      //if (show_details && !zooming) {
-        //$col.addClass('hover');
-        //$tt.html('<h1>' + item[0] + '</h1><span>Minimum order of <b>' + quantity.toLocaleString() + '</b> for <b>$' + cost.toLocaleString() + '</b></span>');
-        //$tt.append(img);
-        //$tt.show();
-        //$(window).mousemove(function(e){
-          //var scrollX = $(window).scrollLeft();
-          //var tt_height = $tt.height();
-          //var tt_width = 300;
+    $col.hover(function() {
+      if (show_details && !zooming) {
+        $col.addClass('hover');
+        $tt.html('<h1>' + item[0] + '</h1><span>Minimum order of <b>' + quantity.toLocaleString() + '</b> for <b>$' + cost.toLocaleString() + '</b></span>');
+        $tt.append(img);
+        $tt.show();
+        $(window).mousemove(function(e){
+          var scrollX = $(window).scrollLeft();
+          var tt_height = $tt.height();
+          var tt_width = 300;
 
-          //var posX = e.pageX - tt_width / 2;
-          //var posY = e.pageY + 50;
+          var posX = e.pageX - tt_width / 2;
+          var posY = e.pageY + 50;
 
-          //if (posX < scrollX) posX = scrollX;
-          //if (posX + tt_width > scrollX + $(window).width()) posX = $(window).width() + scrollX - tt_width;
-          //if (posY + tt_height > height) posY = e.pageY - 50 - tt_height;
+          if (posX < scrollX) posX = scrollX;
+          if (posX + tt_width > scrollX + $(window).width()) posX = $(window).width() + scrollX - tt_width;
+          if (posY + tt_height > height) posY = e.pageY - 50 - tt_height;
 
-          //$tt.offset({left: posX, top: posY});
-        //});
-      //}
-    //}, function() {
-      //if (show_details && !zooming) {
-        //$col.removeClass('hover');
-        //$tt.hide();
-        //$(window).unbind('mousemove');
-      //}
-    //});
+          $tt.offset({left: posX, top: posY});
+        });
+      }
+    }, function() {
+      if (show_details && !zooming) {
+        $col.removeClass('hover');
+        $tt.hide();
+        $(window).unbind('mousemove');
+      }
+    });
 
     $col.attr('target', '_blank');
     $col.attr('href', item[6]);
@@ -147,7 +148,6 @@ function set_scale(s, os, e) {
     var new_w = (w * s/100);
     var new_h = (h * s/100);
     total_width += new_w;
-    $(this).css({'background-size': + new_w + 'px ' + new_h + 'px', width: new_w});
   });
   resize_window();
   $(window).scrollLeft($(window).scrollLeft() * s/os);
@@ -161,4 +161,45 @@ function set_height() {
   //height = $(window).height();
   height = window.innerHeight;
   $baba.css({height: height - $('#key').outerHeight(), marginTop: $('#key').outerHeight()});
+}
+
+var zoom = 1;
+
+function zoom_in() {
+  zoom = zoom * 2;
+  set_zoom();
+}
+
+function zoom_out() {
+  zoom = zoom / 2;
+  if (zoom < 1) zoom = 1;
+  set_zoom();
+}
+
+var zooming = false;
+
+function set_zoom() {
+  if (!zooming || 1==1) {
+    total_width = 0;
+    zooming = true;
+    var total = $('.item').length;
+    $('.item').each(function(item){
+      var w = $(this).data('w');
+      var h = $(this).data('h');
+      var new_w = w * zoom;
+      var new_h = h * zoom;
+      total_width += new_w;
+      var c = $(this).find('canvas')[0];
+      var ctx = c.getContext('2d');
+      var img = $(this).find('img')[0];
+      $(this).css({width: new_w, height: height});
+      c.width = new_w;
+      c.height = height;
+      for (var i = 0; i < $(this).data('quantity'); i++) {
+        ctx.drawImage(img, 0, i * new_h, new_w, new_h);
+      }
+      total --;
+      if (total == 0) zooming = false;
+    });
+  }
 }
