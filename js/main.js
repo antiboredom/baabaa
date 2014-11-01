@@ -7,12 +7,15 @@ var $tt;
 var $baba;
 var show_details = true;
 var zooming = false;
+var c, ctx;
 
 $(document).ready(function(){
   //if (navigator.userAgent.indexOf("Chrome") < 0) {
     //$('#warning').show();
     //return false;
   //}
+  c = $('canvas')[0];
+  ctx = c.getContext('2d');
 
   $tt = $('#tooltip');
   $baba = $('#baba');
@@ -65,61 +68,62 @@ function draw(data) {
   data.sort(function(a, b) {
     return (b[3]*b[2] - a[3] * a[2]);
   });
-  //for (var i = 0; i < total_items; i++) {
-  for (var i = 0; i < 10; i++) {
-    add_item(data[i]);
+  for (var i = 0; i < total_items; i++) {
+  //for (var i = 0; i < 10; i++) {
+    add_item(data[i], i);
   }
 }
 
-function add_item(item) {
+function add_item(item, ind) {
   var img = new Image();
   var $col = $('<a>').addClass('item');
+  var $canv = $('<canvas>');
+  var ctx = $canv[0].getContext('2d');
+  $col.append($canv);
   var quantity = item[3];
   var max_price = item[2]
   var cost = quantity * max_price;
 
   $baba.append($col);
   img.onload = function(){
+
     var h = height / quantity;
     var w = (h/img.height) * img.width;
 
-    $col.css({
-      'background-image': 'url(' + img.src + ')',
-      'background-size': w + 'px ' + h + 'px',
-      width: w
-    });
+    $canv[0].width = w;
+    $canv[0].height = height;
+    console.log(this);
+    for (var i = 0; i < quantity; i ++) {
+      ctx.drawImage(this, 0, i * h, w, h);
+    }
+    //$col.hover(function() {
+      //if (show_details && !zooming) {
+        //$col.addClass('hover');
+        //$tt.html('<h1>' + item[0] + '</h1><span>Minimum order of <b>' + quantity.toLocaleString() + '</b> for <b>$' + cost.toLocaleString() + '</b></span>');
+        //$tt.append(img);
+        //$tt.show();
+        //$(window).mousemove(function(e){
+          //var scrollX = $(window).scrollLeft();
+          //var tt_height = $tt.height();
+          //var tt_width = 300;
 
-    $col.data('w', w);
-    $col.data('h', h);
+          //var posX = e.pageX - tt_width / 2;
+          //var posY = e.pageY + 50;
 
-    $col.hover(function() {
-      if (show_details && !zooming) {
-        $col.addClass('hover');
-        $tt.html('<h1>' + item[0] + '</h1><span>Minimum order of <b>' + quantity.toLocaleString() + '</b> for <b>$' + cost.toLocaleString() + '</b></span>');
-        $tt.append(img);
-        $tt.show();
-        $(window).mousemove(function(e){
-          var scrollX = $(window).scrollLeft();
-          var tt_height = $tt.height();
-          var tt_width = 300;
+          //if (posX < scrollX) posX = scrollX;
+          //if (posX + tt_width > scrollX + $(window).width()) posX = $(window).width() + scrollX - tt_width;
+          //if (posY + tt_height > height) posY = e.pageY - 50 - tt_height;
 
-          var posX = e.pageX - tt_width / 2;
-          var posY = e.pageY + 50;
-
-          if (posX < scrollX) posX = scrollX;
-          if (posX + tt_width > scrollX + $(window).width()) posX = $(window).width() + scrollX - tt_width;
-          if (posY + tt_height > height) posY = e.pageY - 50 - tt_height;
-
-          $tt.offset({left: posX, top: posY});
-        });
-      }
-    }, function() {
-      if (show_details && !zooming) {
-        $col.removeClass('hover');
-        $tt.hide();
-        $(window).unbind('mousemove');
-      }
-    });
+          //$tt.offset({left: posX, top: posY});
+        //});
+      //}
+    //}, function() {
+      //if (show_details && !zooming) {
+        //$col.removeClass('hover');
+        //$tt.hide();
+        //$(window).unbind('mousemove');
+      //}
+    //});
 
     $col.attr('target', '_blank');
     $col.attr('href', item[6]);
@@ -129,7 +133,7 @@ function add_item(item) {
     if (counter == 0) resize_window();
   };
 
-  img.src = 'images/' + item[9];
+  img.src = 'public/images/' + item[9];
 
 }
 
