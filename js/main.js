@@ -69,6 +69,8 @@ $(document).ready(function(){
 
 function reset() {
   scale = 100;
+  $('.item img').unbind();
+  $('.item').unbind();
   $('body').scrollLeft(0);
   $baba.html('');
 }
