@@ -59,15 +59,20 @@ $(document).ready(function(){
   }
 
   $('#menu').change(function(e){
+    reset();
     load(this.value);
   });
 
   load($('#menu').val());
 });
 
-function load(f) {
+function reset() {
+  scale = 100;
   $('body').scrollLeft(0);
   $baba.html('');
+}
+
+function load(f) {
   $.get(f + '.csv', function(data){
     var data = $.csv.toArrays(data);
     var quantities = [];
@@ -90,6 +95,7 @@ function draw(data) {
   //for (var i = 0; i < 10; i++) {
     add_item(data[i], i);
   }
+  //sort();
 }
 
 function add_item(item, ind) {
@@ -98,6 +104,7 @@ function add_item(item, ind) {
   var quantity = item[3];
   var max_price = item[2]
   var cost = quantity * max_price;
+  $col.data('min-purchase', parseFloat(item[5]));
 
   if (use_canvas) {
     var $canv = $('<canvas>');
@@ -243,4 +250,18 @@ function set_zoom() {
       if (total == 0) zooming = false;
     });
   }
+}
+
+function sort() {
+  var items = $('.item');
+  items.sort(function(a, b) {
+    if ($(b).data('min-purchase') < $(a).data('min-purchase')) return -1;
+    else if ($(b).data('min-purchase') > $(a).data('min-purchase')) return 1;
+    else return 0;
+  });
+
+  items.detach().appendTo($baba);
+  //for (var i = 0; i < items.length; i++) {
+    //items[i].parentNode.appendChild(items[i]);
+  //}
 }
