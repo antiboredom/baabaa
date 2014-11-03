@@ -1,5 +1,5 @@
 var $container;
-var s3 = false;
+var s3 = true;
 var total;
 
 $(document).ready(function(){
