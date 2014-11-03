@@ -35,6 +35,10 @@ a {
   border-bottom: 0;
 }
 
+.item img {
+  display:none;
+}
+
 #tooltip {
   display: none;
   position: absolute;

@@ -7,20 +7,24 @@ var $tt;
 var $baba;
 var show_details = true;
 var zooming = false;
+var use_canvas = false;
+var max_per_row = 500;
+var min_quantity, max_quantity;
 
 $(document).ready(function(){
-  //if (navigator.userAgent.indexOf("Chrome") < 0) {
+  if (navigator.userAgent.indexOf("Chrome") < 0) {// && navigator.userAgent.indexOf("Safari") < 0) {
+    use_canvas = true;
     //$('#warning').show();
     //return false;
-  //}
+  }
 
   $tt = $('#tooltip');
   $baba = $('#baba');
   set_height();
 
-  //$(window).resize(function(){
-    //set_height();
-  //});
+  $(window).resize(function(){
+    set_height();
+  });
 
   $('#show_details').click(function(e){
     e.preventDefault();
@@ -32,13 +36,6 @@ $(document).ready(function(){
     }
   });
 
-  $.get('riot4.csv', function(data){
-  //$.get('police_toys.csv', function(data){
-  //$.get('drugs_with_pics.csv', function(data){
-    var data = $.csv.toArrays(data);
-    draw(data);
-  });
-
   $('#left').click(function(){
     $('body').animate({scrollLeft: $(window).scrollLeft() - $(window).width()});
   });
@@ -47,21 +44,45 @@ $(document).ready(function(){
     $('body').animate({scrollLeft: $(window).scrollLeft() + $(window).width()});
   });
 
-  $baba.on('mousewheel', function(e) {
-    old_scale = scale;
-    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-      e.preventDefault();
-      scale += e.deltaY * 2;
-      if (scale < 100) scale = 100;
-      if (counter === 0) {
-        set_scale(scale, old_scale, e);
+  if (!use_canvas) {
+    $baba.on('mousewheel', function(e) {
+      old_scale = scale;
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        scale += e.deltaY * 2;
+        if (scale < 100) scale = 100;
+        if (counter === 0) {
+          set_scale(scale, old_scale, e);
+        }
       }
-    }
+    });
+  }
+
+  $('#menu').change(function(e){
+    load(this.value);
   });
+
+  load($('#menu').val());
 });
+
+function load(f) {
+  $('body').scrollLeft(0);
+  $baba.html('');
+  $.get(f + '.csv', function(data){
+    var data = $.csv.toArrays(data);
+    var quantities = [];
+    data.forEach(function(d) {
+      quantities.push(d[3]);
+    });
+    min_quantity = Math.min.apply(Math, quantities);
+    max_quantity = Math.max.apply(Math, quantities);
+    draw(data);
+  });
+}
 
 function draw(data) {
   total_items = counter = data.length;
+  total_width = 0;
   data.sort(function(a, b) {
     return (b[3]*b[2] - a[3] * a[2]);
   });
@@ -74,33 +95,49 @@ function draw(data) {
 function add_item(item, ind) {
   var img = new Image();
   var $col = $('<a>').addClass('item');
-  var $canv = $('<canvas>');
-  var ctx = $canv[0].getContext('2d');
-  $col.append($canv);
   var quantity = item[3];
   var max_price = item[2]
   var cost = quantity * max_price;
 
+  if (use_canvas) {
+    var $canv = $('<canvas>');
+    var ctx = $canv[0].getContext('2d');
+    $col.append($canv);
+  }
+
   $baba.append($col);
+
   img.onload = function(){
+    if (quantity > max_per_row) quantity = max_per_row;
+
     var h = height / quantity;
     var w = (h/img.height) * img.width;
 
-    $col.append(img);
     $col.data('w', w);
     $col.data('h', h);
-    $col.data('quantity', quantity);
 
-    $col.css({width: w, height: height});
-    $canv[0].width = w;
-    $canv[0].height = height;
-    for (var i = 0; i < quantity; i ++) {
-      ctx.drawImage(this, 0, i * h, w, h);
+    if (use_canvas) {
+      $col.append(img);
+      $col.data('quantity', quantity);
+
+      $col.css({width: w, height: height});
+      $canv[0].width = w;
+      $canv[0].height = height;
+      for (var i = 0; i < quantity; i ++) {
+        ctx.drawImage(this, 0, i * h, w, h);
+      }
+    } else {
+      $col.css({
+        'background-image': 'url(' + img.src + ')',
+        'background-size': w + 'px ' + h + 'px',
+        width: w
+      });
     }
+
     $col.hover(function() {
       if (show_details && !zooming) {
         $col.addClass('hover');
-        $tt.html('<h1>' + item[0] + '</h1><span>Minimum order of <b>' + quantity.toLocaleString() + '</b> for <b>$' + cost.toLocaleString() + '</b></span>');
+        $tt.html('<h1>' + item[0] + '</h1><span>Minimum order of <b>' + item[3].toLocaleString() + ' ' + item[4] + '</b> for <b>$' + cost.toLocaleString() + '</b></span>');
         $tt.append(img);
         $tt.show();
         $(window).mousemove(function(e){
@@ -148,6 +185,7 @@ function set_scale(s, os, e) {
     var new_w = (w * s/100);
     var new_h = (h * s/100);
     total_width += new_w;
+    $(this).css({'background-size': + new_w + 'px ' + new_h + 'px', width: new_w});
   });
   resize_window();
   $(window).scrollLeft($(window).scrollLeft() * s/os);
@@ -158,7 +196,6 @@ function resize_window() {
 }
 
 function set_height() {
-  //height = $(window).height();
   height = window.innerHeight;
   $baba.css({height: height - $('#key').outerHeight(), marginTop: $('#key').outerHeight()});
 }
@@ -195,8 +232,12 @@ function set_zoom() {
       $(this).css({width: new_w, height: height});
       c.width = new_w;
       c.height = height;
-      for (var i = 0; i < $(this).data('quantity'); i++) {
-        ctx.drawImage(img, 0, i * new_h, new_w, new_h);
+      if (img) {
+        for (var i = 0; i < $(this).data('quantity'); i++) {
+          ctx.drawImage(img, 0, i * new_h, new_w, new_h);
+        }
+      } else {
+        console.log(this);
       }
       total --;
       if (total == 0) zooming = false;
