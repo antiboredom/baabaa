@@ -10,6 +10,7 @@ var zooming = false;
 var use_canvas = false;
 var max_per_row = 500;
 var min_quantity, max_quantity;
+var s3 = true;
 
 $(document).ready(function(){
   if (navigator.userAgent.indexOf("Chrome") < 0) {// && navigator.userAgent.indexOf("Safari") < 0) {
@@ -178,7 +179,8 @@ function add_item(item, ind) {
     if (counter == 0) resize_window();
   };
 
-  img.src = 'public/images/' + item[9];
+  var src = s3 ? 'http://baabaa.s3.amazonaws.com/images/' : 'public/images/'
+  img.src = s3 + item[9];
 
 }
 
