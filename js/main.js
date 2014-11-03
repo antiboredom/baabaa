@@ -180,7 +180,7 @@ function add_item(item, ind) {
   };
 
   var src = s3 ? 'http://baabaa.s3.amazonaws.com/images/' : 'public/images/'
-  img.src = s3 + item[9];
+  img.src = src + item[9];
 
 }
 
