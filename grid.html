@@ -4,24 +4,48 @@
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="js/jquery.csv-0.71.min.js"></script>
     <script src="js/jquery.lazyload.js"></script>
-    <script src="js/jquery.masonry.min.js"></script>
+    <script src="js/isotope.pkgd.min.js"></script>
+    <script src="js/packery-mode.pkgd.min.js"></script>
     <script src="js/grid.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <!--<link rel="stylesheet" href="style.css">-->
     <style type="text/css" media="all">
-      #baba.fluid .item {
+/*      #baba.fluid .item {
         width:  20%;
         display: block;
         margin: 0;
         padding: 0;
+        z-index: 1;
       }
-      #baba.fluid .item img
-      {
+*/
+      #baba {
+        margin-top: 30px;
+        background: #eee;
+        }
+      .item {
+        width: 100px;
+        color: #333;
+        text-decoration: none;
+        width: 16.66%;
+        display: block;
+        margin: auto;
+        float: left;
+      }
+      .item img {
         display: block;
         width: 100%;
-        height: auto !important;
-        opacity: 1;
+        margin: auto;
+        padding: 1px;
       }
+      .item h1 {
+        font-size: 18px;
+      }
+      * {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
       body {
         margin:0;
         padding:0;
@@ -40,9 +64,37 @@
         text-align: center;
         background: #333;
       }
+      #show_details {
+        margin-left: 40px;
+        margin-right: 40px;
+      }
       a {
         color: #fff;
       }
+      #tooltip {
+        display: none;
+        position: absolute;
+        z-index: 2;
+        background: #333;
+        color: #fff;
+        padding: 10px;
+        width: 280px;
+      }
+
+      #tooltip img {
+        display: block;
+        margin: auto;
+        margin-top: 10px;
+        max-width: 280px;
+        max-height: 400px;
+      }
+
+      #tooltip h1 {
+        margin-top: 0px;
+        font-weight: bold;
+        font-size: 16px;
+      }
+
 
     </style>
   </head>
@@ -64,8 +116,7 @@
         <option value="labor">Human Labor</option>
       </select>
       for Sale on <a href="http://www.alibaba.com/trade/search?IndexArea=product_en&c=CID3005&atm=&f0=y&SearchText=riot">alibaba.com</a> sorted by minimum order price from highest to lowest
-      <a href="#" id="show_details">Hide item details</a>
-      <a href="http://lav.io" target="_blank">By Sam Lavigne</a>
+      <a href="http://lav.io" target="_blank" style="margin-left: 20px;">By Sam Lavigne</a>
     </div>
     <div id="baba" class="fluid"></div>
     <div id="tooltip"><div>
