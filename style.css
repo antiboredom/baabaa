@@ -117,3 +117,9 @@ a {
   text-align:center;
   display: none;
 }
+
+
+.modes a {
+  text-decoration: none;
+  margin: 0px 4px;
+}
