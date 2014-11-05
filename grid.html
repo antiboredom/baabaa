@@ -3,40 +3,39 @@
     <title>Baba</title>
     <script src="js/jquery-1.11.1.min.js"></script>
     <script src="js/jquery.csv-0.71.min.js"></script>
-    <script src="js/jquery.lazyload.js"></script>
-    <script src="js/isotope.pkgd.min.js"></script>
-    <script src="js/packery-mode.pkgd.min.js"></script>
     <script src="js/grid.js"></script>
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <!--<link rel="stylesheet" href="style.css">-->
     <style type="text/css" media="all">
-/*      #baba.fluid .item {
-        width:  20%;
-        display: block;
-        margin: 0;
-        padding: 0;
-        z-index: 1;
-      }
-*/
       #baba {
         margin-top: 30px;
-        background: #eee;
         }
       .item {
-        width: 100px;
         color: #333;
         text-decoration: none;
-        width: 16.66%;
         display: block;
+        clear: both;
+        background-size: contain;
+        padding: .1em;
+        text-align: center;
         margin: auto;
-        float: left;
+        border: 5px solid #fff;
+        transition: .2s transform, margin;
+        position: relative;
       }
       .item img {
-        display: block;
-        width: 100%;
-        margin: auto;
+        display: inline-block;
+        width: 200px;
         padding: 1px;
+        float: left;
       }
+      .item div {
+        display: inline;
+        color: #fff;
+        background-color: rgba(20, 20, 20, .8);
+        padding: 0 6px;
+      }
+
       .item h1 {
         font-size: 18px;
       }

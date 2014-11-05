@@ -3,6 +3,7 @@ var $container;
 var s3 = false;
 var total;
 var lowest_price, highest_price;
+var base_font = 12;
 
 $(document).ready(function(){
   var doc = location.search.split('=')[1];
@@ -19,17 +20,6 @@ $(document).ready(function(){
     load(this.value);
   });
 
-  //$container.isotype({
-    //transitionDuration: 0,
-    //itemSelector: '.item',
-  //});
-  //$container.isotope({
-    //itemSelector: '.item',
-    //masonry: {
-      //columnWidth: 50
-    //}
-  //});
-
   load($('#menu').val());
 });
 
@@ -38,7 +28,6 @@ function map (n, start1, stop1, start2, stop2) {
 };
 
 function reset() {
-  //$container.isotope('destroy')
   $container.html('');
 }
 
@@ -46,7 +35,7 @@ function load(f) {
   $.get(f + '.csv', function(data){
     var data = $.csv.toArrays(data);
     data.sort(function(a, b) {
-      return (b[3]*b[2] - a[3] * a[2]);
+      return (b[3] - a[3]);
     });
     total = data.length;
 
@@ -71,55 +60,36 @@ function add_item(item, ind) {
   var quantity = item[3];
   var max_price = item[2]
   var cost = quantity * max_price;
-  $col.data('min-purchase', parseFloat(item[5]));
-  $col.attr('target', '_blank');
-  $col.attr('href', item[6]);
-  //$col.css({width: map(quantity * max_price, lowest_price, highest_price, 200, 300)})
-
-
   var src = s3 ? 'http://baabaa.s3.amazonaws.com/images/' : 'public/images/'
   src += item[9];
 
-  img.load(function(){
-    total --;
-    if (total == 0) {
-      $container.isotope({
-        transitionDuration: 0,
-        itemSelector: '.item',
-        layoutMode: 'packery',
-      });
-     }
-  });
+  $col.data('min-purchase', parseFloat(item[5]));
+  $col.attr('target', '_blank');
+  $col.attr('href', item[6]);
+  img.css({width: map(Math.pow(quantity * max_price, 1/4), Math.pow(lowest_price, 1/4), Math.pow(highest_price, 1/4), 20, 300)})
+  $col.css({
+    fontSize: base_font,
+    backgroundImage: "url('"+ src +"')",
+    width: map(Math.pow(quantity * max_price, 1/4), Math.pow(lowest_price, 1/4), Math.pow(highest_price, 1/4), 30, 90) + '%',
+  })
 
   img.attr('src', src);
   img.data('original', src);
 
-  $col.append(img);
-  //$col.append('<div><h1>' + item[0] + '</h1><span>Minimum order of <b>' + item[3].toLocaleString() + ' ' + item[4] + '</b> for <b>$' + cost.toLocaleString() + '</b></span></div>');
+  $col.append('<div>' + item[0] + '<span>: Minimum order of <b>' + item[3].toLocaleString() + ' ' + item[4] + '</b> for <b>$' + cost.toLocaleString() + '</b></span></div>');
 
   $col.hover(function() {
-    $col.addClass('hover');
-    $tt.html('<h1>' + item[0] + '</h1><span>Minimum order of <b>' + item[3].toLocaleString() + ' ' + item[4] + '</b> for <b>$' + cost.toLocaleString() + '</b></span>');
-    $tt.show();
-    $(window).mousemove(function(e){
-      var scrollX = $(window).scrollLeft();
-      var tt_height = $tt.height();
-      var tt_width = 300;
-
-      var posX = e.pageX - tt_width / 2;
-      var posY = e.pageY + 50;
-
-      if (posX < scrollX) posX = scrollX;
-      if (posX + tt_width > scrollX + $(window).width()) posX = $(window).width() + scrollX - tt_width;
-      //if (posY + tt_height > height) posY = e.pageY - 50 - tt_height;
-
-      $tt.offset({left: posX, top: posY});
+    $col.css({
+      transform: 'scaleX(2) scaleY(2)',
+      'z-index': 999,
+      padding: 30,
     });
   }, function() {
-    $col.removeClass('hover');
-    $tt.hide();
-    $(window).unbind('mousemove');
+    $col.css({
+      transform: 'scaleX(1) scaleY(1)',
+      'z-index':1,
+      padding: '.1em',
+    });
   });
-
   $('#baba').append($col);
 }
