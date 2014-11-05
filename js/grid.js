@@ -1,6 +1,6 @@
 var $tt;
 var $container;
-var s3 = false;
+var s3 = true;
 var total;
 var lowest_price, highest_price;
 var base_font = 12;
