@@ -19,6 +19,13 @@ $(document).ready(function(){
     //return false;
   }
 
+  var doc = location.search.split('=')[1];
+  if (typeof doc === 'undefined') {
+    doc = $('#menu').val();
+  } else {
+    $('#menu').val(doc);
+  }
+
   $tt = $('#tooltip');
   $baba = $('#baba');
   set_height();
